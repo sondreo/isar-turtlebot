@@ -21,7 +21,7 @@ class RosBridge(RosBridgeInterface):
 
         self.client: Ros = self.connect_client(host=host, port=port)
 
-        self.execute_task: Topic = Topic(
+        self.drive_to: Topic = Topic(
             client=self.client,
             name="/move_base/goal",
             message_type="move_base_msgs/MoveBaseActionGoal",
