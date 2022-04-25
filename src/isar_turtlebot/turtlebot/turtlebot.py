@@ -1,11 +1,13 @@
 import logging
 from logging import Logger
 from pathlib import Path
+from threading import Thread
 from typing import Optional, Sequence
 from uuid import UUID
 
 from alitra import Transform
 from isar_turtlebot.models.turtlebot_status import Status
+from isar_turtlebot.mqtt.mqtt_client import MqttClient
 from isar_turtlebot.ros_bridge import RosBridge
 from isar_turtlebot.turtlebot.taskhandlers import (
     DriveToHandler,
@@ -44,6 +46,11 @@ class Turtlebot:
 
         self.filenames: dict = dict()
         self.inspections: dict = dict()
+
+        self.mqtt_client = MqttClient(bridge=self.bridge)
+
+        mqtt_thread = Thread(target=self.mqtt_client.publish, args=(), daemon=True)
+        mqtt_thread.start()
 
     def publish_task(self, task: Task) -> None:
         self.task_handler = self.task_handlers[type(task).__name__]
